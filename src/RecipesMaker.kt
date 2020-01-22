@@ -1,3 +1,6 @@
+
+
+
 fun main(args: Array<String>) {
 
     var response: String?
@@ -16,10 +19,13 @@ fun main(args: Array<String>) {
             "3" -> println("Saliendo del programa...")
             else -> println("La opción seleccionada no está entre las posibles, inténtalo de nuevo")
         }
-    } while (response != "3")
+    } while (response != "3" || response != "1")
 }
 
 private fun init(): String? {
+
+
+
     val title: String = """
     :: Bienvenido a Recipe Maker ::
     
@@ -49,6 +55,28 @@ private fun makeRecipe() {
         7. Huevos
         8. Aceites
     """)}()
+    showIngredientsList({readLine() ?: "0"}());
+}
+
+fun showIngredientsList(category: String) {
+
+    var foodList: List<String> = listOf()
+
+    when(category) {
+        "1" -> foodList = listOf("agua")
+        "2" -> foodList = listOf("Leche","Queso","Yogur")
+        "3" -> foodList = listOf("Res","Pollo","Pescado","Cerdo")
+        "4" -> foodList = listOf("Tomate","Zanahoria","Cebolla","Pepino","Lechuga")
+        "5" -> foodList = listOf("Fresa","Plátano","Uvas","Manzana","Naranja","Pera","Cereza")
+        "6" -> foodList = listOf("Avena", "Trigo", "Arroz","Maiz")
+        "7" -> foodList = listOf("Huevos")
+        "8" -> foodList = listOf("Mantequilla","Aceite oliva")
+        else -> println("Opción incorrecta")
+    }
+
+    for ((index, foodElement) in foodList.withIndex()) {
+        println("${index + 1}. $foodElement")
+    }
 }
 
 private fun viewRecipe(category: String) {
