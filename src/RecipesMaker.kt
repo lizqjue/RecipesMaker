@@ -1,6 +1,8 @@
+import model.Food
+import model.Recipe
 
 
-
+val recipesList: MutableList<Recipe> = mutableListOf()
 fun main(args: Array<String>) {
 
     var response: String?
@@ -14,7 +16,7 @@ fun main(args: Array<String>) {
             }
             "2" -> {
                 println("Has seleccionado ver tus recetas")
-                viewRecipe({readLine() ?: "0"}())
+                viewRecipe()
             }
             "3" -> println("Saliendo del programa...")
             else -> println("La opción seleccionada no está entre las posibles, inténtalo de nuevo")
@@ -43,22 +45,61 @@ private fun init(): String? {
 }
 
 private fun makeRecipe() {
-    {println("""
-        Hacer receta
-        Selecciona por categoría el ingrediente que buscas
-        1. Agua
-        2. Leche
-        3. Carne
-        4. Verduras
-        5. Frutas
-        6. Cereal
-        7. Huevos
-        8. Aceites
-    """)}()
-    showIngredientsList({readLine() ?: "0"}());
+
+    var foodList: MutableList<Food> = mutableListOf()
+
+    do {
+        {
+            println(
+                """
+            Selecciona por categoría el ingrediente que buscas
+            1. Agua
+            2. Leche
+            3. Carne
+            4. Verduras
+            5. Frutas
+            6. Cereal
+            7. Huevos
+            8. Aceites
+            
+            Para finalizar la receta, escribe 0
+        """
+            )
+        }()
+
+        var optionSelected = { readLine() ?: "0" }()
+
+        if (optionSelected == "0") {
+            break
+        }
+
+        val listedCategory = showIngredientsList(optionSelected);
+
+        addIngredient(listedCategory, foodList)
+
+    } while(optionSelected != "0")
+
+    recipesList.add(Recipe("Recipe number ${recipesList.size + 1}", foodList))
+
+    println("Receta añadida!")
 }
 
-fun showIngredientsList(category: String) {
+private fun addIngredient(
+    listedCategory: List<String>,
+    foodList: MutableList<Food>
+) {
+    println("Choose an ingredient to add it to the recipe:")
+    val ingredientIndex: Int = { readLine() ?: "0" }().toInt()
+
+    if (ingredientIndex <= listedCategory.size) {
+        foodList.add(Food(1, listedCategory[ingredientIndex - 1]))
+        println("Ingredient ${listedCategory[ingredientIndex - 1]} added")
+    } else {
+        println("The ingredient is not in the list, please enter the number of an ingredient from the list")
+    }
+}
+
+fun showIngredientsList(category: String): List<String> {
 
     var foodList: List<String> = listOf()
 
@@ -71,24 +112,39 @@ fun showIngredientsList(category: String) {
         "6" -> foodList = listOf("Avena", "Trigo", "Arroz","Maiz")
         "7" -> foodList = listOf("Huevos")
         "8" -> foodList = listOf("Mantequilla","Aceite oliva")
-        else -> println("Opción incorrecta")
+        else -> println("Opción incorrecta, introduce un número del 1 al 8")
     }
 
     for ((index, foodElement) in foodList.withIndex()) {
         println("${index + 1}. $foodElement")
     }
+
+    return foodList
 }
 
-private fun viewRecipe(category: String) {
-    println({ category: String -> when(category) {
-        "1" -> "Agua"
-        "2" -> "Leche"
-        "3" -> "Carne"
-        "4" -> "Verduras"
-        "5" -> "Frutas"
-        "6" -> "Cereal"
-        "7" -> "Huevos"
-        "8" -> "Aceites"
-        else -> "La categoría no existe"}
-        }(category))
+private fun viewRecipe() {
+
+    println("Recetas disponibles:")
+
+    for (recipe in recipesList) {
+        println("""
+            ${recipe.name}
+        """.trimIndent());
+    }
+
+    println("Select a recipe:")
+
+    val recipeSelectedIndex = {readLine() ?: "0" }().toInt()
+
+    if (recipeSelectedIndex <= recipesList.size) {
+        println("${recipesList[recipeSelectedIndex - 1].name}")
+        val selectedRecipe = recipesList[recipeSelectedIndex - 1]
+        for(food in selectedRecipe.recipeIngredients) {
+            println("""
+                ${food.name} - quantity: ${food.quantity}
+            """.trimIndent())
+        }
+    } else {
+        println("La receta $recipeSelectedIndex no está disponible")
+    }
 }

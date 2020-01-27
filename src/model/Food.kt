@@ -1,6 +1,6 @@
 package model
 
-class Food(quantity: Int, name: String, description: String) : Ingredient(quantity) {
+data class Food(val quantity: Int, val name: String) : Ingredient(quantity) {
 
 
 }

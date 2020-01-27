@@ -1,3 +1,3 @@
 package model
 
-class Recipe(name: String, recipeIngredients: ArrayList<Food>)
+data class Recipe(val name: String, val recipeIngredients: MutableList<Food>)
